@@ -95,6 +95,6 @@ INSERT INTO Carts (...); -- cart items for testing/screenshotsAdjust passwords u
 4. 🖼 Admin dashboard + Manage Orders with status change.
 5. 🖼 Deployment proof (VS publish success + live site URL).
 6. 🔗 GitHub repo link (`https://github.com/HlahaneKea/ABCRetailers-CLDV6212`).
-7. 🔗 Deployed website URL (`https://st10445678.azurewebsites.net`).
+7. 🔗 Deployed website URL (`abcretailers11-adb7b6gufabndrb4.southafricanorth-01.azurewebsites.net`).
 8. 📹 6‑minute walkthrough video (All functionality Parts 1–3).
 
