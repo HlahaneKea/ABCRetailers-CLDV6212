@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ABCRetailers.Functions")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f627ceb4ea458178407b45a437f0dc5111711102")]
 [assembly: System.Reflection.AssemblyProductAttribute("ABCRetailers.Functions")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ABCRetailers.Functions")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
