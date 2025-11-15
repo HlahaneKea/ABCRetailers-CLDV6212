@@ -1,0 +1,214 @@
+﻿@model ABCRetailers.Models.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<section class="admin-hero text-white mb-4">
+    <div>
+        <p class="text-uppercase mb-1">Admin Workspace</p>
+        <h1 class="display-6 fw-bold">Welcome, @ViewBag.UserName</h1>
+        <p class="mb-0">Monitor the platform, manage inventory, and process customer orders from one place.</p>
+    </div>
+    <span class="badge bg-warning text-dark align-self-start"><i class="fas fa-crown"></i> Admin role</span>
+</section>
+
+<section class="mb-4">
+    <div class="row g-3">
+        <div class="col-sm-6 col-lg-3">
+            <div class="stat-card bg-primary">
+                <i class="fas fa-users"></i>
+                <div>
+                    <p class="label">Total Customers</p>
+                    <h3>@Model.CustomerCount</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="stat-card bg-success">
+                <i class="fas fa-boxes"></i>
+                <div>
+                    <p class="label">Products</p>
+                    <h3>@Model.ProductCount</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="stat-card bg-warning text-dark">
+                <i class="fas fa-shopping-cart"></i>
+                <div>
+                    <p class="label">Orders Submitted</p>
+                    <h3>@Model.OrderCount</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-3">
+            <div class="stat-card bg-info">
+                <i class="fas fa-database"></i>
+                <div>
+                    <p class="label">Storage Ready</p>
+                    <h3>@(Model.FeaturedProducts.Any() ? "Yes" : "Init")</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <h5 class="mb-3 text-uppercase fw-bold text-muted">Management Modules</h5>
+    <div class="row g-4">
+        <div class="col-md-3">
+            <div class="admin-card shadow-sm">
+                <i class="fas fa-user-cog text-primary"></i>
+                <h4>Customers</h4>
+                <p>Approve new registrations and maintain customer profiles.</p>
+                <a asp-controller="Customer" asp-action="Index" class="btn btn-outline-primary w-100">Manage Customers</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="admin-card shadow-sm">
+                <i class="fas fa-box-open text-success"></i>
+                <h4>Products</h4>
+                <p>Upload inventory, adjust prices, and track stock availability.</p>
+                <a asp-controller="Product" asp-action="Index" class="btn btn-outline-success w-100">Manage Products</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="admin-card shadow-sm">
+                <i class="fas fa-clipboard-check text-warning"></i>
+                <h4>Orders</h4>
+                <p>Review orders and update the status to <strong>PROCESSED</strong>.</p>
+                <a asp-controller="Order" asp-action="Manage" class="btn btn-outline-warning text-dark w-100">Process Orders</a>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="admin-card shadow-sm">
+                <i class="fas fa-file-upload text-info"></i>
+                <h4>Uploads</h4>
+                <p>Inspect payment proof files submitted by customers.</p>
+                <a asp-controller="Upload" asp-action="Index" class="btn btn-outline-info w-100">View Files</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="mb-5">
+    <h5 class="mb-3 text-uppercase fw-bold text-muted">Platform Tools</h5>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <div class="admin-tool-card shadow-sm">
+                <div>
+                    <h5><i class="fas fa-cloud-upload-alt text-primary"></i> Azure Storage</h5>
+                    <p class="text-muted mb-2">Use this tool if you need to recreate the Azure Storage resources (tables, queues, blobs, and file shares).</p>
+                    <form asp-action="InitializeStorage" method="post">
+                        <button type="submit" class="btn btn-primary btn-sm">Initialize / Reinitialize Storage</button>
+                        <a asp-action="DebugStorage" class="btn btn-link btn-sm">Check status</a>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="admin-tool-card shadow-sm">
+                <div>
+                    <h5><i class="fas fa-shield-alt text-secondary"></i> Privacy & Policies</h5>
+                    <p class="text-muted mb-2">Keep the legal documentation up to date for audits and submissions.</p>
+                    <a asp-controller="Home" asp-action="Privacy" class="btn btn-secondary btn-sm">View Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section>
+    <h5 class="mb-3 text-uppercase fw-bold text-muted">Featured Products</h5>
+    @if (Model.FeaturedProducts.Any())
+    {
+        <div class="row row-cols-1 row-cols-md-5 g-3">
+            @foreach (var product in Model.FeaturedProducts)
+            {
+                <div class="col">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(product.ImageUrl))
+                        {
+                            <img src="@product.ImageUrl" class="card-img-top" alt="@product.ProductName" style="height: 150px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                <i class="fas fa-image fa-2x text-muted"></i>
+                            </div>
+                        }
+                        <div class="card-body">
+                            <p class="fw-bold mb-1">@product.ProductName</p>
+                            <small class="text-muted d-block">@product.Description</small>
+                            <div class="d-flex justify-content-between align-items-center mt-2">
+                                <span class="text-success fw-bold">@product.Price.ToString("C")</span>
+                                <span class="badge bg-light text-dark">Stock: @product.StockAvailable</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">
+            <i class="fas fa-info-circle"></i> No products available yet.
+            <a asp-controller="Product" asp-action="Create" class="alert-link">Add your first product</a>!
+        </div>
+    }
+</section>
+
+<style>
+    .admin-hero {
+        background: linear-gradient(135deg, #1b1f3a, #3d6ef7);
+        border-radius: 1rem;
+        padding: 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 1rem;
+        box-shadow: 0 1rem 2rem rgba(27, 31, 58, 0.2);
+    }
+
+    .stat-card {
+        border-radius: 0.75rem;
+        padding: 1.25rem;
+        display: flex;
+        gap: 1rem;
+        color: #fff;
+        align-items: center;
+        box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.15);
+    }
+
+        .stat-card i {
+            font-size: 2rem;
+        }
+
+        .stat-card .label {
+            margin-bottom: 0;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 0.05rem;
+        }
+
+    .admin-card {
+        border-radius: 1rem;
+        padding: 1.5rem;
+        background-color: #fff;
+        text-align: center;
+        position: relative;
+    }
+
+        .admin-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+    .admin-tool-card {
+        border-radius: 1rem;
+        padding: 1.5rem;
+        background: #f8f9fc;
+    }
+</style>
+

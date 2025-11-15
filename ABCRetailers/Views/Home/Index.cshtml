@@ -1,0 +1,153 @@
+﻿<!-- Views/Home/Index.cshtml -->
+@model ABCRetailers.Models.ViewModels.HomeViewModel
+@{
+    ViewData["Title"] = "Home";
+}
+
+<div class="text-center mb-5">
+    <h1 class="display-4 text-primary">
+        <i class="fas fa-store"></i> Welcome to ABC Retailers!
+    </h1>
+    <p class="lead">Discover amazing products that make your life extraordinary - where quality meets affordability!</p>
+</div>
+
+<!-- Action Buttons -->
+<div class="row mb-5">
+    <div class="col-md-3 mb-3">
+        <a asp-controller="Customer" asp-action="Index" class="btn btn-primary btn-lg w-100 h-100 d-flex flex-column justify-content-center">
+            <i class="fas fa-users fa-2x mb-2"></i>
+            <span>View Customers</span>
+            <small class="text-light">(@Model.CustomerCount total)</small>
+        </a>
+    </div>
+    <div class="col-md-3 mb-3">
+        <a asp-controller="Product" asp-action="Index" class="btn btn-success btn-lg w-100 h-100 d-flex flex-column justify-content-center">
+            <i class="fas fa-box fa-2x mb-2"></i>
+            <span>View Products</span>
+            <small class="text-light">(@Model.ProductCount total)</small>
+        </a>
+    </div>
+    <div class="col-md-3 mb-3">
+        <a asp-controller="Order" asp-action="Index" class="btn btn-warning btn-lg w-100 h-100 d-flex flex-column justify-content-center">
+            <i class="fas fa-shopping-cart fa-2x mb-2"></i>
+            <span>View Orders</span>
+            <small class="text-light">(@Model.OrderCount total)</small>
+        </a>
+    </div>
+    <div class="col-md-3 mb-3">
+        <a asp-controller="Upload" asp-action="Index" class="btn btn-info btn-lg w-100 h-100 d-flex flex-column justify-content-center">
+            <i class="fas fa-upload fa-2x mb-2"></i>
+            <span>Upload Files</span>
+            <small class="text-light">(Payment proofs)</small>
+        </a>
+    </div>
+</div>
+
+<!-- Storage Initialization -->
+<div class="alert alert-info mb-4">
+    <h5><i class="fas fa-cog"></i> Azure Storage Management</h5>
+    <p>Use the button below to initialize or reinitialize Azure Storage resources (tables, containers, queues, and file shares).</p>
+    <form asp-action="InitializeStorage" method="post" style="display: inline;">
+        <button type="submit" class="btn btn-info">
+            <i class="fas fa-cog"></i> Initialize/Reinitialize Azure Storage
+        </button>
+    </form>
+    <small class="d-block mt-2">This will create all necessary storage resources if they don't exist.</small>
+
+    <!-- Storage Status -->
+    <div class="mt-3">
+        <strong>Current Status:</strong>
+        @if (ViewBag.IsStorageInitialized == true)
+        {
+            <span class="badge bg-success">Storage Ready</span>
+        }
+        else
+        {
+            <span class="badge bg-warning">Storage Not Ready</span>
+        }
+
+        <!-- Debug Button -->
+        <button id="debugStorageBtn" class="btn btn-sm btn-outline-secondary ms-2">
+            <i class="fas fa-bug"></i> Debug Storage
+        </button>
+        <div id="debugResult" class="mt-2 small"></div>
+    </div>
+</div>
+
+<!-- Featured Products Section -->
+<div class="row">
+    <div class="col-12">
+        <h2 class="mb-4">
+            <i class="fas fa-star text-warning"></i> Featured Products
+        </h2>
+
+        @if (Model.FeaturedProducts.Any())
+        {
+            <div class="row justify-content-center">
+                @foreach (var product in Model.FeaturedProducts)
+                {
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-6 mb-4">
+                        <div class="card h-100 shadow-sm">
+                            @if (!string.IsNullOrEmpty(product.ImageUrl))
+                            {
+                                <img src="@product.ImageUrl" class="card-img-top" alt="@product.ProductName" style="height: 150px; object-fit: cover;">
+                            }
+                            else
+                            {
+                                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 150px;">
+                                    <i class="fas fa-image fa-3x text-muted"></i>
+                                </div>
+                            }
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title text-center">@product.ProductName</h6>
+                                <p class="card-text small text-muted flex-grow-1 text-center">@(product.Description.Length > 50 ? product.Description.Substring(0, 50) + "..." : product.Description)</p>
+                                <div class="mt-auto text-center">
+                                    <p class="card-text">
+                                        <strong class="text-success">@product.Price.ToString("C")</strong>
+                                    </p>
+                                    <small class="text-muted">Stock: @product.StockAvailable</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="alert alert-info">
+                <i class="fas fa-info-circle"></i> No products available yet.
+                <a asp-controller="Product" asp-action="Create" class="alert-link">Add your first product</a>!
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    document.getElementById('debugStorageBtn').addEventListener('click', async function() {
+        try {
+            const response = await fetch('/Home/DebugStorage');
+            const data = await response.json();
+
+            const resultDiv = document.getElementById('debugResult');
+            resultDiv.innerHTML = `
+                <div class="alert alert-info">
+                    <strong>Debug Result:</strong><br>
+                    Status: ${data.isStorageInitialized ? 'Ready' : 'Not Ready'}<br>
+                    Message: ${data.message}<br>
+                    Timestamp: ${data.timestamp}<br>
+                    ${data.error ? `Error: ${data.error}` : ''}
+                </div>
+            `;
+        } catch (error) {
+            const resultDiv = document.getElementById('debugResult');
+            resultDiv.innerHTML = `
+                <div class="alert alert-danger">
+                    <strong>Debug Error:</strong><br>
+                    ${error.message}
+                </div>
+                </div>
+            `;
+        }
+    });
+</script>
